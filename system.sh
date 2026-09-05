@@ -2,6 +2,11 @@
 
 ROOTFS_NAME="rootfs-alpine.tar.gz"
 DEVICE_NAME="pico-mini-b"
+LINUX_VER="Alpine-3.24.1"
+ALPINE_VERSION=$(tar xOf "$ROOTFS_NAME" --wildcards '*etc/alpine-release' 2>/dev/null | tr -d '[:space:]')
+[ -z "$ALPINE_VERSION" ] && ALPINE_VERSION="unknown"
+BUILD_DATE=$(date +%Y%m%d)
+IMAGE_NAME="$DEVICE_NAME-alpine-$ALPINE_VERSION-$BUILD_DATE-sysupgrade"
 
 while getopts ":f:d:" opt; do
   case ${opt} in
@@ -59,4 +64,6 @@ popd || exit
 
 rm -rf output
 mkdir -p output
-cp sdk/output/image/update.img "output/$DEVICE_NAME-sysupgrade.img"
+
+cp sdk/output/image/update.img "output/$IMAGE_NAME.img"
+[ -n "$GITHUB_OUTPUT" ] && echo "image-name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"

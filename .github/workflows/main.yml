@@ -1,8 +1,14 @@
 name: Build Alpine Image
 on:
   push:
-    branches: [ main ]     # 推送到main分支就自动触发编译
-  workflow_dispatch:       # 【最重要】网页上可以手动点击运行，不用打tag
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  UPLOAD_FIRMWARE: true
+  UPLOAD_RELEASE: true
+  TZ: Asia/Tashkent
+
 
 jobs:
   build-rootfs:
@@ -51,3 +57,20 @@ jobs:
         with:
           name: ${{ matrix.device }}-sysupgrade
           path: output/${{ matrix.device }}-sysupgrade.img
+
+      - name: Upload firmware to release
+        if: ${{ env.UPLOAD_RELEASE == 'true' }}
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        with:
+          tag_name: latest
+          name: Latest firmware
+          body: |
+            Automatically built firmware.
+            Device: ${{ matrix.device }}
+            Commit: ${{ github.sha }}
+          prerelease: false
+          make_latest: true
+          files: |
+            output/${{ matrix.device }}-sysupgrade.img
