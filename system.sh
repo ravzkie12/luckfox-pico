@@ -40,13 +40,16 @@ echo "$DEVICE_ID" | ./build.sh lunch
 echo "export RK_CUSTOM_ROOTFS=../sysdrv/custom_rootfs/$ROOTFS_NAME" >> .BoardConfig.mk
 echo "export RK_BOOTARGS_CMA_SIZE=\"1M\"" >> .BoardConfig.mk
 
-# build sysdrv - rootfs
+# Workaround: build.sh пишет bin/sdkinfo, не создавая директорию заранее
+sed -i '/cat > \$RK_PROJECT_PACKAGE_ROOTFS_DIR\/bin\/sdkinfo <<EOF/i\\tmkdir -p "$RK_PROJECT_PACKAGE_ROOTFS_DIR/bin"' build.sh
+
 ./build.sh uboot
 ./build.sh kernel
 ./build.sh driver
 ./build.sh env
-#./build.sh app
-# package firmware
+./build.sh firmware
+./build.sh save
+popd || exit
 ./build.sh firmware
 ./build.sh save
 
