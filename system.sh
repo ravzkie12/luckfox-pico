@@ -39,9 +39,12 @@ rm -rf .BoardConfig.mk
 echo "$DEVICE_ID" | ./build.sh lunch
 echo "export RK_CUSTOM_ROOTFS=../sysdrv/custom_rootfs/$ROOTFS_NAME" >> .BoardConfig.mk
 echo "export RK_BOOTARGS_CMA_SIZE=\"1M\"" >> .BoardConfig.mk
-# Workaround: build.sh пишет bin/sdkinfo, не создавая директорию заранее.
-# Патчим project/build.sh напрямую — build.sh это симлинк на него, sed -i его иначе сломает.
-sed -i '/cat > \$RK_PROJECT_PACKAGE_ROOTFS_DIR\/bin\/sdkinfo <<EOF/i\\tmkdir -p "$RK_PROJECT_PACKAGE_ROOTFS_DIR/bin"' project/build.sh
+
+# Workaround: build.sh при custom rootfs пишет файлы в стандартные подкаталоги
+# (bin/, etc/profile.d/, etc/init.d/, usr/bin/ и т.д.), не создавая их —
+# минимальный Alpine-rootfs их не содержит. Создаём заранее, сразу после распаковки.
+# Патчим project/build.sh напрямую — build.sh это симлинк на него, sed -i иначе его сломает.
+sed -i '/^\ttar xf \$rootfs_tarball -C \$RK_PROJECT_PACKAGE_ROOTFS_DIR$/a\\tmkdir -p $RK_PROJECT_PACKAGE_ROOTFS_DIR/{bin,sbin,etc/profile.d,etc/init.d,usr/bin,usr/sbin,usr/lib,usr/share,lib}' project/build.sh
 
 ./build.sh uboot
 ./build.sh kernel
