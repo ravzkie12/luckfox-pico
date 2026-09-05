@@ -27,7 +27,10 @@ rc-update add sshd default
 apk add mtd-utils-ubi
 apk add bottom
 apk add neofetch
-
+apk add wget
+apk add nano
+apk add mc
+apk add pciutils
 # Clear apk cache
 rm -rf /var/cache/apk/*
 
