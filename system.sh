@@ -45,6 +45,8 @@ echo "export RK_BOOTARGS_CMA_SIZE=\"1M\"" >> .BoardConfig.mk
 # минимальный Alpine-rootfs их не содержит. Создаём заранее, сразу после распаковки.
 # Патчим project/build.sh напрямую — build.sh это симлинк на него, sed -i иначе его сломает.
 sed -i '/^\ttar xf \$rootfs_tarball -C \$RK_PROJECT_PACKAGE_ROOTFS_DIR$/a\\tmkdir -p $RK_PROJECT_PACKAGE_ROOTFS_DIR/{bin,sbin,etc/profile.d,etc/init.d,usr/bin,usr/sbin,usr/lib,usr/share,lib}' project/build.sh
+sed -i '/^&gmac {$/,/^};$/ s/status = "disabled";/status = "okay";/' \
+  sysdrv/source/kernel/arch/arm/boot/dts/rv1103g-luckfox-pico-mini-b.dts
 
 ./build.sh uboot
 ./build.sh kernel
