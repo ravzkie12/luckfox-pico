@@ -51,5 +51,3 @@ jobs:
         with:
           name: ${{ matrix.device }}-sysupgrade
           path: output/${{ matrix.device }}-sysupgrade.img
-
-          path: output/${{ matrix.device }}-sysupgrade.img
