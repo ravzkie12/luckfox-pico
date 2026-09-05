@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eo pipefail
+#set -eo pipefail
 OUTPUT_DIR="output"
 ROOTFS_FILE="rootfs-alpine.tar.gz"
 
