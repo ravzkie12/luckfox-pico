@@ -1,4 +1,8 @@
 name: Build Alpine Image
+
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main ]
@@ -56,21 +60,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.device }}-sysupgrade
-          path: output/${{ matrix.device }}-sysupgrade.img
+          path: output/*.img
+          if-no-files-found: error
 
       - name: Upload firmware to release
         if: ${{ env.UPLOAD_RELEASE == 'true' }}
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           tag_name: latest
           name: Latest firmware
           body: |
-            Automatically built firmware.
+            Alpine Linux firmware
+
             Device: ${{ matrix.device }}
             Commit: ${{ github.sha }}
-          prerelease: false
           make_latest: true
           files: |
-            output/${{ matrix.device }}-sysupgrade.img
+            output/*.img
