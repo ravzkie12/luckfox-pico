@@ -27,7 +27,7 @@ sudo ./upgrade_tool uf pico-pro-max-sysupgrade.img
 
 Windows:
 ```bash
-sudo ./upgrade_tool.exe uf pico-pro-max-sysupgrade.img
+./upgrade_tool.exe uf pico-pro-max-sysupgrade.img
 ```
 
 
